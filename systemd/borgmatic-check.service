@@ -1,0 +1,13 @@
+.include /etc/systemd/system/borgmatic@.service
+
+[Unit]
+Description=borgmatic weekly consistency checks (all configs)
+OnFailure=
+
+[Service]
+ExecStart=
+ExecStart=systemd-inhibit --who="borgmatic-check" --what="sleep:shutdown" --why="Prevent interrupting scheduled backup check" /usr/local/bin/borgmatic-check-wrapper.sh
+
+ExecStartPost=
+ExecStopPost=
+

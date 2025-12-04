@@ -1,0 +1,18 @@
+constants:
+  name: crypt.img
+  image_name: crypt.img
+  image_systemd_mount: mnt-disk-crypt.mount
+  image_cryptsetup_name: crypt
+
+<<: !include
+    - /etc/borgmatic.d/common/local_backup.yaml
+    - /etc/borgmatic.d/common/commands_image_mount.yaml
+
+source_directories:
+    - /mnt/disk/crypt
+
+repositories:
+  - path: /mnt/veliki/backup/crypt.img
+    label: crypt.img_1
+    encryption: repokey
+

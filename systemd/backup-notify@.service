@@ -1,0 +1,7 @@
+[Unit]
+Description=Backup failure notifier for (%i)
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/backup-notify.sh backup %i failure
+

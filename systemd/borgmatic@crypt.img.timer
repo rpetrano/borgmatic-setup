@@ -1,0 +1,10 @@
+[Unit]
+Description=Schedule: borgmatic backup (crypt.img)
+
+[Timer]
+OnCalendar=Mon,Thu *-*-* 12:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+

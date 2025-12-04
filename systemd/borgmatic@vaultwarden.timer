@@ -1,0 +1,10 @@
+[Unit]
+Description=Schedule: borgmatic backup (vaultwarden)
+
+[Timer]
+OnCalendar=11:30
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+

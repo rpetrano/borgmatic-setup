@@ -1,0 +1,16 @@
+# Requirements:
+#   * Constants:
+#       mount_name -> the filename of the image to mount (e.g. Win10 ssd partition)
+#       mount_uuid -> uuid of the device to be mounted (from /dev/disk/by-uuid or blkid command)
+#       mount_dest -> mountpoint (e.g. /mnt/win10_ssd
+
+commands:
+  - before: configuration
+    run:
+      - echo "Mounting {mount_name}..."
+      - mount -o ro "/dev/disk/by-uuid/{mount_uuid}" "{mount_dest}"
+  - after: configuration
+    run:
+      - echo "Unmounting {mount_name}..."
+      - umount "{mount_dest}" 2>/dev/null || true
+

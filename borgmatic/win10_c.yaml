@@ -1,0 +1,37 @@
+constants:
+    name: win10_c
+    mount_name: Win10 ssd partition
+    mount_uuid: 26A2FEC9A2FE9D0D
+    mount_dest: /mnt/win10_ssd
+
+<<: !include
+    - /etc/borgmatic.d/common/local_backup.yaml
+    - /etc/borgmatic.d/common/commands_mount.yaml
+
+source_directories:
+    - /mnt/win10_ssd
+
+exclude_patterns:
+  - '/mnt/win10_ssd/hiberfil.sys'
+  - '/mnt/win10_ssd/pagefile.sys'
+  - '/mnt/win10_ssd/swapfile.sys'
+  - '/mnt/win10_ssd/System Volume Information'
+  - '/mnt/win10_ssd/$Recycle.Bin'
+  - '/mnt/win10_ssd/Windows/Temp'
+  - '/mnt/win10_ssd/Windows/SoftwareDistribution'
+  - '/mnt/win10_ssd/Windows/Prefetch'
+  - '/mnt/win10_ssd/Windows/Logs'
+  - '/mnt/win10_ssd/DumpStack.log'
+  - '/mnt/win10_ssd/DumpStack.log.tmp'
+  - '/mnt/win10_ssd/Memory.dmp'
+  - '/mnt/win10_ssd/Minidump'
+  - '/mnt/win10_ssd/Recovery'
+
+repositories:
+  - path: /mnt/disk/backup/win10_ssd
+    label: win10_ssd_1
+    encryption: repokey
+  - path: /mnt/veliki/backup/win10_ssd
+    label: win10_ssd_2
+    encryption: repokey
+

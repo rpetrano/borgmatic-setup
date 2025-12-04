@@ -1,0 +1,18 @@
+constants:
+    name: win10_d
+    mount_name: Win10 hdd partition
+    mount_uuid: B8ACDEDFACDE976A
+    mount_dest: /mnt/win10_hdd
+
+<<: !include
+    - /etc/borgmatic.d/common/local_backup.yaml
+    - /etc/borgmatic.d/common/commands_mount.yaml
+
+source_directories:
+    - /mnt/win10_hdd
+
+repositories:
+  - path: /mnt/veliki/backup/win10_hdd
+    label: win10_hdd_1
+    encryption: repokey
+

@@ -1,0 +1,10 @@
+[Unit]
+Description=Schedule: borgmatic backup (win10_d)
+
+[Timer]
+OnCalendar=Mon,Thu *-*-* 17:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+

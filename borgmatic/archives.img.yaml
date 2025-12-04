@@ -1,0 +1,18 @@
+constants:
+  name: archives.img
+  image_name: archives.img
+  image_systemd_mount: mnt-disk-backup-archives.mount
+  image_cryptsetup_name: backup_archives
+
+<<: !include
+    - /etc/borgmatic.d/common/local_backup.yaml
+    - /etc/borgmatic.d/common/commands_image_mount.yaml
+
+source_directories:
+    - /mnt/disk/backup/archives/
+
+repositories:
+  - path: /mnt/veliki/backup/archives.img
+    label: archives.img_1
+    encryption: repokey
+

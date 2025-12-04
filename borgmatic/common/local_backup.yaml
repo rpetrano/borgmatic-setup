@@ -1,0 +1,56 @@
+# Requirements:
+#   * Constants:
+#       name -> the name of the configuration
+#   * ENV:
+#       GMAIL_USERNAME -> username for gmail
+#       GMAIL_PASSWORD -> app password for gmail
+
+constants:
+  apprise_gmail: "mailtos://${GMAIL_USERNAME}:${GMAIL_PASSWORD}@gmail.com?from=borgmatic <${GMAIL_USERNAME}@gmail.com>"
+
+one_file_system: true
+exclude_caches: true
+source_directories_must_exist: true
+
+encryption_passphrase: "{credential file /etc/secrets/borg}"
+compression: auto,zstd,6
+
+archive_name_format: '{now:%Y%m%d%H%M%S}'
+
+retries: 2
+retry_wait: 30
+
+keep_3monthly: 1
+keep_monthly: 1
+keep_weekly: 1
+keep_daily: 3
+
+checks:
+    - name: repository
+    - name: archives
+    - name: data
+check_last: 1
+
+commands:
+  - after: error
+    run:
+      - echo "{name} backup FAILED!" >&2
+
+apprise:
+    services:
+        - url: "{apprise_gmail}"
+          label: gmail
+    start:
+        title: "Borgmatic START {name}"
+        body: "Borgmatic backup event START for configuration {name}"
+    finish:
+        title: "Borgmatic FINISH {name}"
+        body: "Borgmatic backup event FINISH for configuration {name}"
+    fail:
+        title: "Borgmatic FAIL {name}"
+        body: "Borgmatic backup event FAIL for configuration {name}"
+    states:
+        - start
+        - finish
+        - fail
+

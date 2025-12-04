@@ -1,0 +1,41 @@
+constants:
+    name: immich
+
+<<: !include
+    - /etc/borgmatic.d/common/local_backup.yaml
+
+source_directories:
+  - /srv/immich/
+  - /mnt/veliki/immich/library/
+  - /var/backups/immich/db-dumps/
+
+repositories:
+  - /mnt/disk/backup/immich
+
+exclude_patterns:
+  - /mnt/veliki/immich/library/backups/
+  - /mnt/veliki/immich/library/encoded-video/
+  - /mnt/veliki/immich/library/thumbs/
+
+commands:
+  - before: configuration
+    run:
+    - test -r /mnt/veliki/immich/library/
+    - mkdir -p /var/backups/immich/db-dumps
+    - "docker inspect -f '{{.State.Running}}' immich_server           | grep -q true && docker stop immich_server >/dev/null"
+    - "docker inspect -f '{{.State.Running}}' immich_machine_learning | grep -q true && docker stop immich_machine_learning >/dev/null"
+    - "docker inspect -f '{{.State.Running}}' immich_redis            | grep -q true && docker stop immich_redis >/dev/null"
+    - >
+      docker exec -t immich_postgres
+      pg_dump --clean --if-exists -U postgres -d immich -F p
+      > /var/backups/immich/db-dumps/immich-db-$(date +%F_%H-%M-%S).dump
+    - "docker inspect -f '{{.State.Running}}' immich_postgres         | grep -q true && docker stop immich_postgres >/dev/null"
+
+  - after: configuration
+    run:
+    - find /var/backups/immich/db-dumps -type f -name 'immich-db-*.dump' -mtime +14 -delete
+    - "docker start immich_postgres >/dev/null"
+    - "docker start immich_redis >/dev/null"
+    - "docker start immich_machine_learning >/dev/null"
+    - "docker start immich_server >/dev/null"
+

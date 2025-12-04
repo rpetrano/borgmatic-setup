@@ -1,0 +1,17 @@
+# Requirements:
+#   * Constants:
+#       image_name -> the filename of the image to mount (e.g. archives.img)
+#       image_systemd_mount -> the name of the systemd mount unit that mounts the image FS (e.g. mnt-disk-backup-archives.mount)
+#       image_cryptsetup_name -> name of the cryptsetup device from crypttab (e.g. backup_archives)
+
+commands:
+  - before: configuration
+    run:
+      - echo "Mounting {image_name}..."
+      - systemctl start "{image_systemd_mount}"
+  - after: configuration
+    run:
+      - echo "Unmounting {image_name}..."
+      - systemctl stop "{image_systemd_mount}" 2>/dev/null || true
+      - systemctl stop "systemd-cryptsetup@{image_cryptsetup_name}.service" 2>/dev/null || true
+

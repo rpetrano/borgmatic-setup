@@ -1,0 +1,19 @@
+constants:
+    name: vaultwarden
+
+<<: !include
+    - /etc/borgmatic.d/common/local_backup.yaml
+
+sqlite_databases:
+    - name: vaultwarden
+      path: /var/lib/vaultwarden/db.sqlite3
+      label: vaultwarden
+
+repositories:
+  - path: /mnt/disk/backup/vaultwarden
+    label: vaultwarden_1
+    encryption: repokey
+  - path: /mnt/veliki/backup/vaultwarden
+    label: vaultwarden_2
+    encryption: repokey
+

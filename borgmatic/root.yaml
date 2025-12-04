@@ -1,0 +1,30 @@
+constants:
+    name: root
+
+<<: !include
+    - /etc/borgmatic.d/common/local_backup.yaml
+
+source_directories:
+    - /
+
+exclude_patterns:
+    - /dev/*
+    - /proc/*
+    - /sys/*
+    - /tmp/*
+    - /run/*
+    - /mnt/*
+    - /media/*
+    - /lost+found
+    - /var/lib/docker/*
+    - /var/lib/libvirt/images/*
+    - /swapfile
+
+repositories:
+  - path: /mnt/disk/backup/arch-desktop
+    label: arch_desktop_1
+    encryption: repokey
+  - path: /mnt/veliki/backup/arch-desktop
+    label: arch_desktop_2
+    encryption: repokey
+
