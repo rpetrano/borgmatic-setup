@@ -10,7 +10,9 @@ source_directories:
   - /var/backups/immich/db-dumps/
 
 repositories:
-  - /mnt/disk/backup/immich
+  - path: /mnt/disk/backup/immich
+    label: immich_1
+    encryption: repokey-blake2
 
 exclude_patterns:
   - /mnt/veliki/immich/library/backups/

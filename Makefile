@@ -6,8 +6,10 @@ BIN_DIR         ?= /usr/local/bin
 # systemd units / timers
 SYSTEMD_SERVICES = \
 	systemd/borgmatic@.service \
-	systemd/borgmatic-check.service \
 	systemd/backup-notify@.service
+
+# override drop-in for borgmatic-check@.service
+BORG_CHECK_OVERRIDE = systemd/borgmatic-check@.service
 
 SYSTEMD_TIMERS = \
 	systemd/borgmatic@archives.img.timer \
@@ -17,7 +19,7 @@ SYSTEMD_TIMERS = \
 	systemd/borgmatic@win10_c.timer \
 	systemd/borgmatic@win10_d.timer \
 	systemd/borgmatic@immich.timer \
-	systemd/borgmatic-check.timer
+	systemd/borgmatic-check@check.timer
 
 # borgmatic configs
 BORG_CONFIGS = \
@@ -58,12 +60,21 @@ help:
 install: install-systemd install-borg install-bin reload
 
 .PHONY: install-systemd
-install-systemd: $(SYSTEMD_SERVICES) $(SYSTEMD_TIMERS)
+install-systemd: $(SYSTEMD_SERVICES) $(SYSTEMD_TIMERS) $(BORG_CHECK_OVERRIDE)
 	@echo "Installing systemd services to $(SYSTEMD_DIR)"
 	@for f in $(SYSTEMD_SERVICES); do \
 		echo "  install $$f -> $(SYSTEMD_DIR)/$$(basename $$f)"; \
 		install -Dm644 "$$f" "$(SYSTEMD_DIR)/$$(basename $$f)"; \
 	done
+
+	@echo "Installing borgmatic-check@.service as symlink + drop-in override"
+	@echo "  symlink $(SYSTEMD_DIR)/borgmatic-check@.service -> $(SYSTEMD_DIR)/borgmatic@.service"
+	@ln -sfn "borgmatic@.service" "$(SYSTEMD_DIR)/borgmatic-check@.service"
+
+	@override_dir="$(SYSTEMD_DIR)/borgmatic-check@check.service.d"; \
+	echo "  install $(BORG_CHECK_OVERRIDE) -> $$override_dir/override.conf"; \
+	install -Dm644 "$(BORG_CHECK_OVERRIDE)" "$$override_dir/override.conf"
+
 	@echo "Installing systemd timers to $(SYSTEMD_DIR)"
 	@for f in $(SYSTEMD_TIMERS); do \
 		echo "  install $$f -> $(SYSTEMD_DIR)/$$(basename $$f)"; \
@@ -108,8 +119,7 @@ enable:
 		borgmatic@vaultwarden.timer \
 		borgmatic@win10_c.timer \
 		borgmatic@win10_d.timer \
-		borgmatic-check.timer || true;
-	fi
+		borgmatic-check@check.timer || true
 
 .PHONY: disable
 disable:
@@ -121,5 +131,5 @@ disable:
 		borgmatic@vaultwarden.timer \
 		borgmatic@win10_c.timer \
 		borgmatic@win10_d.timer \
-		borgmatic-check.timer || true;
+		borgmatic-check@check.timer || true
 
