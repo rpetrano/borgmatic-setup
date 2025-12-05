@@ -119,6 +119,7 @@ enable:
 		borgmatic@vaultwarden.timer \
 		borgmatic@win10_c.timer \
 		borgmatic@win10_d.timer \
+		borgmatic@immich.timer \
 		borgmatic-check@check.timer || true
 
 .PHONY: disable
@@ -131,5 +132,6 @@ disable:
 		borgmatic@vaultwarden.timer \
 		borgmatic@win10_c.timer \
 		borgmatic@win10_d.timer \
+		borgmatic@immich.timer \
 		borgmatic-check@check.timer || true
 
